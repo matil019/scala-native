@@ -34,7 +34,15 @@ class OutputStreamWriter(private[this] var out: OutputStream,
     this(out, Charset.defaultCharset)
 
   def this(out: OutputStream, charsetName: String) =
-    this(out, Charset.forName(charsetName))
+    this(
+      out,
+      try {
+        Charset.forName(charsetName)
+      } catch {
+        case e: UnsupportedCharsetException =>
+          throw new UnsupportedEncodingException(e.getMessage())
+      }
+    )
 
   def getEncoding(): String =
     if (closed) null else enc.charset.name
