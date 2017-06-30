@@ -1,9 +1,16 @@
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file._
+import java.nio.file.attribute._
 
 object Test {
   def main(args: Array[String]): Unit = {
-    import scala.collection.JavaConverters._
-    Files.walk(Paths.get(args(0))).iterator.asScala.foreach(println)
+    Files.walkFileTree(
+      Paths.get(args(0)),
+      new SimpleFileVisitor[Path] {
+        override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+          println(file)
+          FileVisitResult.CONTINUE
+        }
+      }
+    )
   }
 }
